@@ -1,0 +1,51 @@
+name: 'publish'
+
+on:
+  push:
+    branches:
+      - release
+
+env:
+  APP_NAME: 'App Name'
+  WINDOW_NAME: 'Your Name'
+  DIST_DIR: '../dist'
+  DEV_PATH: '../dist'
+  CONFIG_PATH: './tauri.myconf.json'
+
+jobs:
+  publish-tauri:
+    strategy:
+      fail-fast: false
+
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: Install Rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Install tauri-cli
+        run: |
+          npm i @tauri-apps/cli
+
+      - name: Initialize Tauri for Windows
+        run: |
+          yarn tauri init --app-name "$env:APP_NAME" --window-title "$env:WINDOW_NAME" --dist-dir $env:DIST_DIR --dev-path $env:DEV_PATH
+
+      - name: Build Tauri App
+        run: |
+          yarn tauri build -c ${{ env.CONFIG_PATH }}
+
+      - name: Upload build bundles
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-bundles
+          path: ./src-tauri/target/release/bundle/
