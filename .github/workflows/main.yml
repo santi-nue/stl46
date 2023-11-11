@@ -1,9 +1,8 @@
 name: 'publish'
-
 on:
   push:
     branches:
-      - release
+      - main
 
 env:
   APP_NAME: 'App Name'
