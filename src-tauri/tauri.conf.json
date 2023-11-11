@@ -1,0 +1,4 @@
+"bundle": {
+  "identifier": "com.example.myapp",
+  "name": "My Tauri App"
+}
